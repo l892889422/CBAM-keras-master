@@ -20,8 +20,10 @@ from keras.preprocessing import image
 #VALID_DIR = os.path.join(DATA_DIR, 'validation')
 #VALID_DIR='G:/python/untitled1/demo/data/validation/test'
 
-TRAIN_DIR='D:/AI1403\ljy/CBAM-keras-master/数据集/train'
-VALID_DIR='D:/AI1403\ljy/CBAM-keras-master/数据集/val'
+# TRAIN_DIR='D:/AI1403\ljy/CBAM-keras-master/数据集/train'
+# VALID_DIR='D:/AI1403\ljy/CBAM-keras-master/数据集/val'
+TRAIN_DIR='G:/python/train'
+VALID_DIR='G:/python/val'
 SIZE = (224, 224)
 BATCH_SIZE = 2       #每次送入的数据
 
