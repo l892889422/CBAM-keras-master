@@ -2,7 +2,7 @@ import math, json, os, sys
 import numpy as np
 import keras
 from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler, ReduceLROnPlateau
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout,Flatten
 from keras.models import Model
 from keras.optimizers import Adam
 from utils import lr_schedule
@@ -82,8 +82,8 @@ if __name__ == "__main__":
     batches = gen.flow_from_directory(TRAIN_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
     val_batches = val_gen.flow_from_directory(VALID_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
 
-    model = keras.applications.resnet50.ResNet50()          #预训练模型
-    model = keras.applications.resnet.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=5)        #预训练模型
+    #model = keras.applications.resnet50.ResNet50()          #预训练模型
+    model = keras.applications.resnet.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling='avg', classes=5)        #预训练模型
     classes = list(iter(batches.class_indices))             #用训练好的模型预测时，预测概率序列和Labels的对应关系
     # model.layers.pop()    #弹出模型的最后一层
     #
@@ -91,14 +91,13 @@ if __name__ == "__main__":
     # for layer in model.layers:
     #     layer.trainable=False
     #
-    # last = model.layers[-1].output  #输出
-    # #全连接层 神经元数量和激活函数
-    # print('神经元数量',len(classes))
-    # # last = Dropout()(last)
-    # x = Dense(len(classes), activation="softmax")(last)
-    # print(model.layers[-1].name)
-    # finetuned_model = Model(model.input, x)
-
+    last = model.layers[-1].output  #输出
+    #全连接层 神经元数量和激活函数
+    print('神经元数量',len(classes))
+    # last = Dropout()(last)
+    x = Dense(len(classes), activation="softmax")(last)
+    model = Model(model.input, x)
+    model.summary()
     # 设置损失函数，优化器，模型在训练和测试时的性能指标
     model.compile(optimizer=Adam(lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
     # for c in batches.class_indices:
