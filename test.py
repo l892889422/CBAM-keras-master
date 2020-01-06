@@ -6,28 +6,10 @@ from keras.layers import Dense, Dropout
 from keras.models import Model
 from keras.optimizers import Adam
 from utils import lr_schedule
-from keras.preprocessing import image
-#猫狗数据正常
-#番茄99  35哇哇哇哇哇哇哇哇哇哇哇哇哇哇哇哇哇哇哇
-
-#TRAIN_DIR = os.path.join(DATA_DIR, 'train')
-#TRAIN_DIR='G:/python/untitled1/demo/data/train/plantvillage'
-
-
-# TRAIN_DIR='D:/AI1403/ljy/resnet50/untitled1/demo/data/train/train'
-# VALID_DIR='D:/AI1403/ljy/resnet50/untitled1/demo/data/validation/validation'
-#print(TRAIN_DIR)val
-#VALID_DIR = os.path.join(DATA_DIR, 'validation')
-#VALID_DIR='G:/python/untitled1/demo/data/validation/test'
-
 TRAIN_DIR='D:/AI1403/ljy/数据集/train'
 VALID_DIR='D:/AI1403/ljy/数据集/val'
-# TRAIN_DIR='G:/python/train'
-# VALID_DIR='G:/python/val'
 SIZE = (224, 224)
 BATCH_SIZE = 64       #每次送入的数据
-
-
 if __name__ == "__main__":
     num_train_samples = sum([len(files) for r, d, files in os.walk(TRAIN_DIR)]) #数量
     num_valid_samples = sum([len(files) for r, d, files in os.walk(VALID_DIR)])
@@ -82,8 +64,7 @@ if __name__ == "__main__":
     batches = gen.flow_from_directory(TRAIN_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
     val_batches = val_gen.flow_from_directory(VALID_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
 
-    #model = keras.applications.resnet50.ResNet50()          #预训练模型
-    model = keras.applications.resnet.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling='avg', classes=2)        #预训练模型
+    model = keras.applications.resnet.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling='avg', classes=5)        #预训练模型
     classes = list(iter(batches.class_indices))             #用训练好的模型预测时，预测概率序列和Labels的对应关系
     # model.layers.pop()    #弹出模型的最后一层
     #
@@ -100,7 +81,7 @@ if __name__ == "__main__":
     model = Model(model.input, x)
 
     # 设置损失函数，优化器，模型在训练和测试时的性能指标
-    model.compile(optimizer=Adam(lr_schedule(0)), loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     # for c in batches.class_indices:
     #     classes[batches.class_indices[c]] = c
     # finetuned_model.classes = classes
