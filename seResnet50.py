@@ -42,6 +42,7 @@ def scheduler(epoch):
 
 def resnext(img_input,classes_num):
     global inplanes
+    img_input = keras.layers.Input(shape=(224, 224, 3))
     def add_common_layer(x):
         x = BatchNormalization(momentum=0.9, epsilon=1e-5)(x)
         x = Activation('relu')(x)
@@ -119,50 +120,50 @@ def resnext(img_input,classes_num):
     x = GlobalAveragePooling2D()(x)
     x = dense_layer(x)
     model = models.Model(img_input, x, name='resnet50se')
-    model.load_weights(weights)
-    return x
+    model.load_weights('D:/AI1403/ljy/预训练/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5',by_name=True)
+    return model
 
-if __name__ == '__main__':
-    # Load data
-    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-    y_train = keras.utils.to_categorical(y_train, num_classes)
-    y_test = keras.utils.to_categorical(y_test, num_classes)
-    x_train = x_train.astype('float32')
-    x_test = x_test.astype('float32')
-    
-    # Normalization
-    for i in range(3):
-        x_train[:,:,:,i] = (x_train[:,:,:,i] - mean[i]) / std[i]
-        x_test[:,:,:,i] = (x_test[:,:,:,i] - mean[i]) / std[i]
-
-    # Build network
-    img_input = Input(shape=(img_rows,img_cols,img_channels))
-    output = resnext(img_input,num_classes)
-    senet = Model(img_input, output)
-    print(senet.summary())
-
-    # Load weight
-    # senet.load_weights('senet.h5')
-
-    # Set optimizer
-    sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
-    senet.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
-
-    # Set callback
-    ## tensorboard log
-    tb_cb = TensorBoard(log_dir='./senet/', histogram_freq=0)
-    ## Learning rate scheduler
-    change_lr = LearningRateScheduler(scheduler)
-    ## Checkpoint
-    ckpt = ModelCheckpoint('./ckpt_senet.h5', save_best_only=False, mode='auto', period=10)
-    cbks = [change_lr,tb_cb,ckpt]                   
-
-    # Set data augmentation
-    print('Using real-time data augmentation.')
-    datagen = ImageDataGenerator(horizontal_flip=True,width_shift_range=0.125,height_shift_range=0.125,fill_mode='constant',cval=0.)
-
-    datagen.fit(x_train)
-
-    # Start training
-    senet.fit_generator(datagen.flow(x_train, y_train,batch_size=batch_size), steps_per_epoch=iterations, epochs=epochs, callbacks=cbks,validation_data=(x_test, y_test))
-    senet.save('senet.h5')
+# if __name__ == '__main__':
+#     # Load data
+#     (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+#     y_train = keras.utils.to_categorical(y_train, num_classes)
+#     y_test = keras.utils.to_categorical(y_test, num_classes)
+#     x_train = x_train.astype('float32')
+#     x_test = x_test.astype('float32')
+#
+#     # Normalization
+#     for i in range(3):
+#         x_train[:,:,:,i] = (x_train[:,:,:,i] - mean[i]) / std[i]
+#         x_test[:,:,:,i] = (x_test[:,:,:,i] - mean[i]) / std[i]
+#
+#     # Build network
+#     img_input = Input(shape=(img_rows,img_cols,img_channels))
+#     output = resnext(img_input,num_classes)
+#     senet = Model(img_input, output)
+#     print(senet.summary())
+#
+#     # Load weight
+#     # senet.load_weights('senet.h5')
+#
+#     # Set optimizer
+#     sgd = optimizers.SGD(lr=.1, momentum=0.9, nesterov=True)
+#     senet.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+#
+#     # Set callback
+#     ## tensorboard log
+#     tb_cb = TensorBoard(log_dir='./senet/', histogram_freq=0)
+#     ## Learning rate scheduler
+#     change_lr = LearningRateScheduler(scheduler)
+#     ## Checkpoint
+#     ckpt = ModelCheckpoint('./ckpt_senet.h5', save_best_only=False, mode='auto', period=10)
+#     cbks = [change_lr,tb_cb,ckpt]
+#
+#     # Set data augmentation
+#     print('Using real-time data augmentation.')
+#     datagen = ImageDataGenerator(horizontal_flip=True,width_shift_range=0.125,height_shift_range=0.125,fill_mode='constant',cval=0.)
+#
+#     datagen.fit(x_train)
+#
+#     # Start training
+#     senet.fit_generator(datagen.flow(x_train, y_train,batch_size=batch_size), steps_per_epoch=iterations, epochs=epochs, callbacks=cbks,validation_data=(x_test, y_test))
+#     senet.save('senet.h5')

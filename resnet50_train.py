@@ -20,10 +20,10 @@ from keras.preprocessing import image
 #VALID_DIR = os.path.join(DATA_DIR, 'validation')
 #VALID_DIR='G:/python/untitled1/demo/data/validation/test'
 
-# TRAIN_DIR='D:/AI1403/ljy/数据集/train'
-# VALID_DIR='D:/AI1403/ljy/数据集/val'
-TRAIN_DIR='G:/python/train'
-VALID_DIR='G:/python/val'
+TRAIN_DIR='D:/AI1403/ljy/数据集/train'
+VALID_DIR='D:/AI1403/ljy/数据集/val'
+# TRAIN_DIR='G:/python/train'
+# VALID_DIR='G:/python/val'
 SIZE = (224, 224)
 BATCH_SIZE = 64       #每次送入的数据
 
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     batches = gen.flow_from_directory(TRAIN_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
     val_batches = val_gen.flow_from_directory(VALID_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
 
-    model = keras.applications.resnet50.ResNet50()          #预训练模型
+    #model = keras.applications.resnet50.ResNet50()          #预训练模型
     model = keras.applications.resnet.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling='avg', classes=2)        #预训练模型
     classes = list(iter(batches.class_indices))             #用训练好的模型预测时，预测概率序列和Labels的对应关系
     # model.layers.pop()    #弹出模型的最后一层
@@ -94,6 +94,7 @@ if __name__ == "__main__":
     last = model.layers[-1].output  #输出
     #全连接层 神经元数量和激活函数
     print('神经元数量',len(classes))
+    # last = Dropout()(last)
     x = Dense(len(classes), activation="softmax")(last)
     print(model.layers[-1].name)
     model = Model(model.input, x)
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     # finetuned_model.classes = classes
     #早停法防止过拟合，patience: 当early stop被激活(如发现loss相比上一个epoch训练没有下降)，则经过patience个epoch后停止训练
     #early_stopping = EarlyStopping(patience=10)
-    checkpointer = ModelCheckpoint('resnet50.h5', verbose=1, save_best_only=True)  # 添加模型保存点
+    checkpointer = ModelCheckpoint('resnet50_cbam.h5', verbose=1, save_best_only=True)  # 添加模型保存点
     lr_scheduler = LearningRateScheduler(lr_schedule)
     lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                    cooldown=0,
