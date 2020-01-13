@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/CBAM-keras-master.iml" filepath="$PROJECT_DIR$/.idea/CBAM-keras-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/fanqieyemian.iml" filepath="$PROJECT_DIR$/.idea/fanqieyemian.iml" />
     </modules>
   </component>
 </project>

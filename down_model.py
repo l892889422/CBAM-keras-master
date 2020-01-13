@@ -209,5 +209,6 @@ def ResNet50(include_top=True,
 
 
     #model.load_weights('D:/AI1403/ljy/预训练/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5',by_name=True)
-    model.load_weights('G:/python/预训练/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5', by_name=True)
+    #model.load_weights('G:/python/预训练/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5', by_name=True)
+    model.load_weights('/content/drive/My Drive/qqq/fanqie/模型/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5', by_name=True)
     return model

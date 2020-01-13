@@ -130,14 +130,12 @@ def conv_block(input_tensor,
                       name=conv_name_base + '2c')(x)
     x = keras.layers.BatchNormalization(axis=3, name=bn_name_base + '2c')(x)
 
-    x = keras.layers.Activation('relu')(x)
     shortcut = keras.layers.Conv2D(filters3, (1, 1), strides=strides,
                              kernel_initializer='he_normal',
                              name=conv_name_base + '1')(input_tensor)
     shortcut = keras.layers.BatchNormalization(
         axis=3, name=bn_name_base + '1')(shortcut)
 
-    x = squeeze_excite_block(x)
     x = keras.layers.add([x, shortcut])
     x = keras.layers.Activation('relu')(x)
     return x
@@ -148,7 +146,7 @@ def ResNet50(include_top=True,
              input_tensor=None,
              input_shape=None,
              pooling=None,
-             classes=1000,
+             classes=5,
              **kwargs):
 
     global backend, layers, models, utils
@@ -187,17 +185,17 @@ def ResNet50(include_top=True,
     x = identity_block(x, 3, [512, 512, 2048], stage=5, block='b')
     x = identity_block(x, 3, [512, 512, 2048], stage=5, block='c')
 
-    # if include_top:
-    #     x = keras.layers.GlobalAveragePooling2D(name='avg_pool')(x)
-    #     x = keras.layers.Dense(classes, activation='softmax', name='fc1000')(x)
-    # else:
-    #     if pooling == 'avg':
-    #         x = keras.layers.GlobalAveragePooling2D()(x)
-    #     elif pooling == 'max':
-    #         x = keras.layers.GlobalMaxPooling2D()(x)
-    #     else:
-    #         warnings.warn('The output shape of `ResNet50(include_top=False)` '
-    #                       'has been changed since Keras 2.2.0.')
+    if include_top:
+        x = keras.layers.GlobalAveragePooling2D(name='avg_pool')(x)
+        x = keras.layers.Dense(classes, activation='softmax', name='fc1000')(x)
+    else:
+        if pooling == 'avg':
+            x = keras.layers.GlobalAveragePooling2D()(x)
+        elif pooling == 'max':
+            x = keras.layers.GlobalMaxPooling2D()(x)
+        else:
+            warnings.warn('The output shape of `ResNet50(include_top=False)` '
+                          'has been changed since Keras 2.2.0.')
 
 
     if input_tensor is not None:
@@ -209,5 +207,7 @@ def ResNet50(include_top=True,
 
 
     #model.load_weights('D:/AI1403/ljy/预训练/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5',by_name=True)
-    model.load_weights('G:/python/预训练/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5', by_name=True)
+    #model.load_weights('G:/python/预训练/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5', by_name=True)
+    model.load_weights('/content/drive/My Drive/qqq/fanqie/模型/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5',
+                       by_name=True)
     return model

@@ -8,7 +8,6 @@ from keras.optimizers import Adam
 import up_model
 
 from utils import lr_schedule
-import seResnet50
 # TRAIN_DIR='D:/AI1403/ljy/原始图/train'
 # VALID_DIR='D:/AI1403/ljy/原始图/val'
 TRAIN_DIR='G:/python/原始图/train'
@@ -29,18 +28,19 @@ if __name__ == "__main__":
     val_batches = val_gen.flow_from_directory(VALID_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
 
 
-    #model=keras.applications.resnet50.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=(224,224,3), pooling='avg', classes=5)
-    model=up_model.ResNet50(img_input=None, classes_num=5)
-    #model=se_resnet50.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling='avg', classes=5)
+    model=up_model.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling='avg', classes=5)
+    #model=keras.applications.resnet50.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling='avg', classes=5)
     #model = keras.applications.resnet.ResNet50(include_top=False, weights='imagenet', input_tensor=None, input_shape=None, pooling='avg', classes=5)
 
     classes = list(iter(batches.class_indices))             #用训练好的模型预测时，预测概率序列和Labels的对应关系
     # model.layers.pop()    #弹出模型的最后一层
+    # for layer in model.layers:
+    #     if 'rese' in layer.name:
+    #         layer.trainable=True
+    #     else:
+    #         layer.trainable = False
     for layer in model.layers:
-        if 'rese' in layer.name:
-            layer.trainable=True
-        else:
-            layer.trainable = False
+         layer.trainable=False
     last = model.layers[-1].output  #输出
     #全连接层 神经元数量和激活函数
     print('神经元数量',len(classes))
@@ -51,7 +51,6 @@ if __name__ == "__main__":
     print(model.layers[-1].name)
     model = Model(model.input, x)
     model.summary()
-    # 设置损失函数，优化器，模型在训练和测试时的性能指标
     #model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
     model.compile(optimizer='sgd', loss='binary_crossentropy', metrics=['accuracy'])
     # for c in batches.class_indices:
